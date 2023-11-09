@@ -3,12 +3,14 @@
 
   inputs = {
       # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-22.11-darwin";
-      nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+      # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+      nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
 
       darwin.url = "github:lnl7/nix-darwin";
       darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-      home-manager.url = "github:nix-community/home-manager";
+      # home-manager.url = "github:nix-community/home-manager";
+      home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
       home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
       private-config.url = "github:aohoy/private-config";

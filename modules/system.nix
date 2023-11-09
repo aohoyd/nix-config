@@ -10,9 +10,12 @@
       interval.Day = 7;
       options = "--delete-older-than 7d";
     };
+    settings = {
+      auto-optimise-store = true;
+    };
     extraOptions = ''
-      auto-optimise-store = true
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes repl-flake nix-command flakes
+      extra-nix-path = nixpkgs=flake:nixpkgs
     '';
   };
   # Auto upgrade nix package and the daemon service.
