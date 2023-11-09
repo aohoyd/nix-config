@@ -5,7 +5,7 @@
     interactiveShellInit = ''
       set -x TERM xterm-256color
       set -x EDITOR hx
-      set -x VISUAL subl
+      set -x VISUAL code
       set -x LC_ALL en_US.UTF-8
 
       fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin
@@ -13,9 +13,12 @@
     '';
     shellAbbrs = {
       e = "$EDITOR";
+      v = "$VISUAL";
+
       watch = "viddy";
 
       gg = "git get";
+      gt = "git tag";
       glol = "git log --graph --all --pretty='format:%C(auto)%h %C(cyan)%ar %C(auto)(%G?) %C(auto)%d %C(magenta)%an %C(auto)%s'";
       gs = "git stack";
       gsy = "git sync";
@@ -27,6 +30,7 @@
       k = "kubectl";
       ka = "kubectl apply --recursive -f";
       kex = "kubectl exec -i -t";
+      ked = "kubectl edit";
       klo = "kubectl logs -f";
       klop = "kubectl logs -f -p";
       kp = "kubectl proxy";
@@ -96,7 +100,7 @@
     };
     shellAliases = {
       cat = "bat --paging=never";
-      ls = "exa --group-directories-first";
+      ls = "eza --group-directories-first";
     };
     functions = {
       ny = ''

@@ -1,4 +1,20 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }: 
+let
+  # acorn = pkgs.acorn.overrideAttrs (old: rec {
+  #   version = "0.9.1";
+  #   src = pkgs.fetchFromGitHub {
+  #     owner = "acorn-io";
+  #     repo = "acorn";
+  #     rev = "v${version}";
+  #     hash = "sha256-FPnKmWKnEFVDXbDI+An3EKzleP43NEC9/dq4SJfWQrU=";
+  #   };
+  # });
+  acorn = final: prev: {
+    acorn = import ./acorn.nix { inherit (prev) lib buildGoModule fetchFromGitHub; };
+  };
+in {
+# {
+  nixpkgs.overlays = [ acorn ];
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = [
@@ -17,13 +33,13 @@
     pkgs.colima
 
     # programming
-    pkgs.go
+    pkgs.go_1_21
     pkgs.gofumpt
-    pkgs.jdk17
+    # pkgs.jdk17
     pkgs.rustup
-    pkgs.python310
-    pkgs.python310Packages.pip
-    pkgs.poetry
+    pkgs.python311
+    pkgs.python311Packages.pip
+    # pkgs.poetry
 
     # cli
     pkgs.hck
@@ -37,7 +53,7 @@
     pkgs.yq-go
     pkgs.bat
     pkgs.curl
-    pkgs.exa
+    pkgs.eza
     pkgs.fd
     pkgs.fzf
     pkgs.gettext
@@ -62,6 +78,7 @@
     pkgs.krew
     pkgs.kube-linter
     pkgs.k9s
+    pkgs.acorn
 
     # yabai
     pkgs.yabai

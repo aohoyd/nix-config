@@ -41,8 +41,12 @@ return {
         { key = "7", mods = "CMD",       action=wezterm.action{ActivateTab=6}},
         { key = "8", mods = "CMD",       action=wezterm.action{ActivateTab=7}},
         { key = "9", mods = "CMD",       action=wezterm.action{ActivateTab=8}},
-        { key = "x", mods = "CMD",       action=wezterm.action{CloseCurrentPane={confirm=true}}},
-        { key = "w", mods = "CMD",       action=wezterm.action{CloseCurrentTab={confirm=true}}},
+        { key = "w", mods = "CMD",       action=wezterm.action{CloseCurrentPane={confirm=true}}},
+
+        { key = "d", mods = "CMD",       action=wezterm.action{ScrollByPage=1}},
+        { key = "u", mods = "CMD",       action=wezterm.action{ScrollByPage=-1}},
+        { key = "d", mods = "CMD|SHIFT", action=wezterm.action{ScrollByPage=0.5}},
+        { key = "u", mods = "CMD|SHIFT", action=wezterm.action{ScrollByPage=-0.5}},
 
         { key = "n", mods="SHIFT|CTRL", action="ToggleFullScreen" },
         { key = "v",   mods="CMD",      action=wezterm.action.PasteFrom "Clipboard" },
