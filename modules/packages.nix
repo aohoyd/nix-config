@@ -21,6 +21,7 @@ in {
     pkgs.btop
     pkgs.choose
     pkgs.lnav
+    pkgs.tailspin
     pkgs.cfssl
     pkgs.chezmoi
     pkgs.go-task
@@ -83,5 +84,8 @@ in {
     # yabai
     pkgs.yabai
     pkgs.skhd
+
+    # falkehub
+    pkgs.fh
   ];
 }

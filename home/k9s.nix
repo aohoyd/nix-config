@@ -55,13 +55,30 @@
           background: false
           args:
             - -c
-            - '"$@" | lnav -q'
+            - '"$@" | tspin -f'
             - dummy-arg
-            - kubectl
-            - logs
-            - -f
+            - stern
+            - $NAME
             - -n
             - $NAMESPACE
+        # Sends logs over to stern for processing.
+        sternlogsContainers:
+          shortCut: Ctrl-L
+          confirm: false
+          description: "Logs (stern)"
+          scopes:
+            - containers
+          command: bash
+          background: false
+          args:
+            - -c
+            - '"$@" | tspin -f'
+            - dummy-arg
+            - stern
+            - $POD
+            - -n
+            - $NAMESPACE
+            - -c
             - $NAME
         # watch events
         watch-events:

@@ -97,6 +97,8 @@
       ldo = "lazydocker";
       t = "tig";
       ts = "tig status";
+
+      b = "br";
     };
     shellAliases = {
       cat = "bat --paging=never";
