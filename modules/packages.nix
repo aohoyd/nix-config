@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: 
+{ config, pkgs, ... }:
 let
   # acorn = pkgs.acorn.overrideAttrs (old: rec {
   #   version = "0.9.1";
@@ -37,6 +37,7 @@ in {
     pkgs.go_1_21
     pkgs.gofumpt
     # pkgs.jdk17
+    # pkgs.vagrant
     pkgs.rustup
     pkgs.python311
     pkgs.python311Packages.pip
@@ -69,6 +70,7 @@ in {
     pkgs.glab
     pkgs.gh
     pkgs.tig
+    pkgs.gitui
 
     # k8s
     pkgs.kind
@@ -83,7 +85,7 @@ in {
 
     # yabai
     pkgs.yabai
-    pkgs.skhd
+    # pkgs.skhd
 
     # falkehub
     pkgs.fh

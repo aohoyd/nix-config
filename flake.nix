@@ -13,7 +13,7 @@
       home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
       home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-      private-config.url = "github:aohoy/private-config";
+      private-config.url = "github:aohoyd/private-config";
       private-config.flake = false;
   };
   

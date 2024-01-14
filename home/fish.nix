@@ -12,8 +12,8 @@
       fish_add_path ~/go/bin ~/.krew/bin /run/current-system/sw/bin 
     '';
     shellAbbrs = {
-      e = "$EDITOR";
-      v = "$VISUAL";
+      e = "hx";
+      v = "code";
 
       watch = "viddy";
 
@@ -26,6 +26,7 @@
       gpr = "git prev";
       gam = "git amend";
       gfp = "git fetch -p";
+      gi = "gitui";
 
       k = "kubectl";
       ka = "kubectl apply --recursive -f";
@@ -101,7 +102,7 @@
       b = "br";
     };
     shellAliases = {
-      cat = "bat --paging=never";
+      cat = "bat --theme=GitHub --paging=never";
       ls = "eza --group-directories-first";
     };
     functions = {
