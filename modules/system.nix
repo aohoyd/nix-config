@@ -23,7 +23,7 @@
   
   # Enable yabai service
   services.yabai.enable = true;
-  services.skhd.enable = true;
+  # services.skhd.enable = true;
 
   security.pam.enableSudoTouchIdAuth = true;
 

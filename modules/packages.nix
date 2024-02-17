@@ -41,6 +41,7 @@ in {
     pkgs.rustup
     pkgs.python311
     pkgs.python311Packages.pip
+    pkgs.nodejs_21
     # pkgs.poetry
 
     # cli
@@ -61,6 +62,7 @@ in {
     pkgs.gettext
     pkgs.docker-credential-helpers
     pkgs.nushell
+    pkgs.neovim
 
     # git
     pkgs.git
@@ -71,6 +73,7 @@ in {
     pkgs.gh
     pkgs.tig
     pkgs.gitui
+    pkgs.lazygit
 
     # k8s
     pkgs.kind

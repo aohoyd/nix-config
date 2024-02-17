@@ -4,16 +4,17 @@
     enable = true;
     interactiveShellInit = ''
       set -x TERM xterm-256color
-      set -x EDITOR hx
-      set -x VISUAL code
+      set -x GIT_EDITOR nvim
+      set -x EDITOR nvim
+      set -x VISUAL neovide --no-tabs
       set -x LC_ALL en_US.UTF-8
 
-      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin
+      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin /Applications/neovide.app/Contents/MacOS
       fish_add_path ~/go/bin ~/.krew/bin /run/current-system/sw/bin 
     '';
     shellAbbrs = {
-      e = "hx";
-      v = "code";
+      e = "nvim";
+      v = "neovide";
 
       watch = "viddy";
 
@@ -102,7 +103,7 @@
       b = "br";
     };
     shellAliases = {
-      cat = "bat --theme=GitHub --paging=never";
+      cat = "bat --theme='Monokai Extended' --paging=never";
       ls = "eza --group-directories-first";
     };
     functions = {

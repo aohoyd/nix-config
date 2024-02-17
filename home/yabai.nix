@@ -27,9 +27,9 @@
       yabai -m config window_placement first_child
 
       # layout
-      yabai -m config layout bsp
       yabai -m config auto_balance off
       yabai -m config window_topmost on
+      yabai -m config layout bsp
 
       # gaps
       yabai -m config top_padding    0
@@ -37,12 +37,6 @@
       yabai -m config left_padding   0
       yabai -m config right_padding  0
       yabai -m config window_gap     0
-
-      yabai -m config --space 2 top_padding    1
-      yabai -m config --space 2 bottom_padding 1
-      yabai -m config --space 2 left_padding   1
-      yabai -m config --space 2 right_padding  1
-      yabai -m config --space 2 window_gap     5
 
       # rules
       yabai -m rule --add app="^System Settings$" manage=off
