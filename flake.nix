@@ -9,8 +9,8 @@
       darwin.url = "github:lnl7/nix-darwin";
       darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-      # home-manager.url = "github:nix-community/home-manager";
-      home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
+      home-manager.url = "github:nix-community/home-manager";
+      # home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
       home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
       private-config.url = "github:aohoyd/private-config";
@@ -34,13 +34,14 @@
               ({...}: { homebrew.enable = brewEnable; })
               (./modules)
               home-manager.darwinModules.home-manager {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.${user} = {...}:
-                  {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users.${user} = {...}: {
                     imports = [ ./home "${private-config}/${hostname}/home" ];
                   };
-                home-manager.extraSpecialArgs = { inherit user; };
+                  extraSpecialArgs = { inherit user; };
+                };                
               }
             ] ++ extraModules;
           };

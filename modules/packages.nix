@@ -63,15 +63,15 @@ in {
     pkgs.docker-credential-helpers
     pkgs.nushell
     pkgs.neovim
+    pkgs.neovide
 
     # git
     pkgs.git
     pkgs.delta
-    # pkgs.git-get
+    pkgs.git-get
     pkgs.git-lfs
     pkgs.glab
     pkgs.gh
-    pkgs.tig
     pkgs.gitui
     pkgs.lazygit
 
