@@ -18,43 +18,35 @@
   };
   
   # add the inputs declared above to the argument attribute set
-  outputs = { self, nixpkgs, home-manager, darwin, private-config, ... }:
+  outputs = inputs:
     let
-      mkDarwinSystem =
-        { hostname
-        , user
-        , system ? "aarch64-darwin"
-        , extraModules ? []
-        , brewEnable ? false
-        , ...}:
-          darwin.lib.darwinSystem {
-            inherit system;
-            specialArgs = { inherit user; };
-            modules = [
-              ({...}: { homebrew.enable = brewEnable; })
-              (./modules)
-              home-manager.darwinModules.home-manager {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  users.${user} = {...}: {
-                    imports = [ ./home "${private-config}/${hostname}/home" ];
-                  };
-                  extraSpecialArgs = { inherit user; };
-                };                
-              }
-            ] ++ extraModules;
-          };
+      inherit (inputs) self nixpkgs;
+      darwinSystems = ["aarch64-darwin"];
+      forAllSystems = nixpkgs.lib.genAttrs darwinSystems;
+
+      mkApp = scriptName: system: {
+        type = "app";
+        program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
+          #!/usr/bin/env bash
+          PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
+          echo "Running ${scriptName} for ${system}"
+          exec ${self}/apps/${scriptName}
+        '')}/bin/${scriptName}";
+      };
+
+      mkDarwinApps = system: {
+        "build" = mkApp "build" system;
+        "switch" = mkApp "switch" system;
+        "home-build" = mkApp "home-build" system;
+        "home-switch" = mkApp "home-switch" system;
+      };
+
+      darwinHosts = import ./outputs/darwin-conf.nix { inherit inputs outputs; };
     in
     {
-      darwinConfigurations = {
-        macbook-work = mkDarwinSystem {
-          user = "aolshanskiy";
-          hostname = "macbook-work";
-          system = "aarch64-darwin";
-          # Uncomment to enable Homebrew
-          # brewEnable = true;
-        };
-      };
+      apps = forAllSystems mkDarwinApps;
+
+      darwinConfigurations = builtins.mapAttrs (host: conf: conf.system) darwinHosts;
+      homeConfigurations = builtins.mapAttrs (host: conf: conf.home) darwinHosts;
     };
 }

@@ -53,7 +53,7 @@
       yabai -m space 4 --label chat
       yabai -m space 5 --label mail
       yabai -m space 6 --label todo
-      yabai -m space 7 --label split
+      yabai -m space 7 --label terminal
 
       yabai -m config --space 2 layout stack
       yabai -m config --space 3 layout stack
@@ -64,6 +64,7 @@
       yabai -m rule --add app="Code" space=code
       yabai -m rule --add app="Sublime" space=code
       yabai -m rule --add app="Zed" space=code
+      yabai -m rule --add app="Neovide" space=code
 
       yabai -m rule --add app="PyCharm" space=ide
       yabai -m rule --add app="GoLand" space=ide
@@ -75,6 +76,9 @@
       yabai -m rule --add app="UpNote" space=todo
       yabai -m rule --add app="Bear" space=todo
       yabai -m rule --add app="Anytype" space=todo
+      yabai -m rule --add app="Craft" space=todo
+
+      yabai -m rule --add app="kitty" space=terminal
 
       echo "yabai configuration loaded.."
     '';
