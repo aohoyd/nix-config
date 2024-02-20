@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ...}:
+{...}:
 {
   homebrew = {
     casks = [
@@ -7,7 +7,6 @@
       "utm"
       "wezterm"
       "wireshark"
-      "openlens"
     ];
   };
 }

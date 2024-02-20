@@ -2,7 +2,8 @@
 {
   programs.starship = {
     enable = true;
-    enableFishIntegration = true;
+    # manually run fish integration
+    enableFishIntegration = false;
     settings = {
       format = lib.concatStrings [
         "$directory"
