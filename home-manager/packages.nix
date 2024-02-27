@@ -45,6 +45,9 @@
     krew
     kube-linter
     k9s
-    # pkgs.acorn
+
+    # custom packages
+    acorn
+    cdebug
   ];
 }
