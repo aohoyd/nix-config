@@ -25,7 +25,6 @@
     rustup
     python311
     python311Packages.pip
-    nodejs_21
 
     # falkehub
     fh

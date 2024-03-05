@@ -14,4 +14,15 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-/run/current-system/sw/bin/yabai -m window --focus east
+set -l PATH /run/current-system/sw/bin
+set -l DIR east
+
+yabai -m window --focus $DIR 2>/dev/null || \
+  begin
+    set -l visible (yabai -m query --windows --display $DIR | jq -r 'map(select(.["is-visible"]).id) | first')
+    if test "$visible" = "null"
+      yabai -m display --focus $DIR
+    else
+      yabai -m window --focus $visible
+    end
+  end

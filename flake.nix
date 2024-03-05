@@ -16,6 +16,9 @@
 
     private-config.url = "github:aohoyd/private-config";
     private-config.flake = false;
+
+    superfile.url = "github:yorukot/superfile";
+    superfile.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -43,7 +46,7 @@
   in {
     # Custom packages
     # Accessible through 'nix build', 'nix shell', etc
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    packages = forAllSystems (system: import ./pkgs { inherit inputs; pkgs = nixpkgs.legacyPackages.${system}; });
     # Formatter for nix files, available through 'nix fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
 
@@ -60,9 +63,9 @@
     # Darwin configuration entrypoint
     # Available through 'darwin-rebuild --flake .#your-hostname'
     darwinConfigurations = {
-      macbook-work = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = { inherit inputs outputs; user = users.default; host = "macbook-work"; };
+      macbook-work = let system = "aarch64-darwin"; in darwin.lib.darwinSystem {
+        inherit system;
+        specialArgs = { inherit inputs outputs system; user = users.default; host = "macbook-work"; };
         modules = [
           ./darwin/configuration.nix
         ];
@@ -72,9 +75,9 @@
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
-      "aolshanskiy@macbook-work" = home-manager.lib.homeManagerConfiguration {
+      "aolshanskiy@macbook-work" = let system = "aarch64-darwin"; in home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-        extraSpecialArgs = {inherit inputs outputs; user = users.default; host = "macbook-work"; };
+        extraSpecialArgs = {inherit inputs outputs system; user = users.default; host = "macbook-work"; };
         modules = [
           ./home-manager/home.nix
         ];

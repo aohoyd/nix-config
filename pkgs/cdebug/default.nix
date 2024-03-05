@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "cdebug";
-  version = "0.0.17";
+  version = "0.0.18";
 
   src = fetchFromGitHub {
     owner = "iximiuz";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-lEdfDEpN7/AWUxP28aK1lCC3h1izhqHx971jLUx4HM4=";
+    hash = "sha256-WzIHP8FCwETDSJ3VJXUUY0asNUYhNMJbhKWggsijAhg=";
   };
 
-  vendorHash = "sha256-t5ukROp4sR/wiRTGGGUOYzGO9ctsMTq/fA8CfV6zQdU=";
+  vendorHash = "sha256-NTU6/UUF1bDeXepayfPbLhmKUXFaMbO/GlCQulRI5sw=";
 
   ldflags = [
     "-X main.version=v${version}"

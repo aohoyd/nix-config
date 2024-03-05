@@ -3,7 +3,7 @@
   programs.git = {
     enable = true;
     delta = {
-      enable = true;
+      enable = false;
       options = {
         features = "decorations";
         interactive = { keep-plus-minus-markers = false; };
@@ -17,6 +17,10 @@
           hunk-header-style = "file line-number syntax";
         };
       };
+    };
+    difftastic = {
+      enable = true;
+      display = "inline";
     };
     aliases = {
       next = "stack next";

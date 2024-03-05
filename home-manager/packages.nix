@@ -26,9 +26,12 @@
     nushell
     neovim
     neovide
+    fx
+    mise
 
     # git
     delta
+    difftastic
     git-get
     git-lfs
     glab
@@ -47,7 +50,7 @@
     k9s
 
     # custom packages
-    acorn
     cdebug
+    superfile
   ];
 }

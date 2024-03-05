@@ -41,17 +41,20 @@
       # rules
       yabai -m rule --add app="^System Settings$" manage=off
       yabai -m rule --add app="^Dash$" manage=off
-      # yabai -m rule --add app="^Толк$" manage=off
       yabai -m rule --add app="^OpenVPN Connect$" manage=off
       yabai -m rule --add app="^Tunnelblick$" manage=off
       yabai -m rule --add app="^Raycast$" manage=off
 
       # workspace management
-      yabai -m space 1 --label www
-      yabai -m space 2 --label code
-      yabai -m space 3 --label ide
-      yabai -m space 4 --label chat
-      yabai -m space 5 --label mail
+      yabai -m display 1 --label _123
+      yabai -m display 2 --label _456
+      yabai -m display 3 --label _78
+
+      yabai -m space 1 --label code
+      yabai -m space 2 --label ide
+      yabai -m space 3 --label mail
+      yabai -m space 4 --label www
+      yabai -m space 5 --label chat
       yabai -m space 6 --label todo
       yabai -m space 7 --label terminal
 
@@ -59,27 +62,34 @@
       yabai -m config --space 3 layout stack
 
       # assign apps to spaces
-      # yabai -m rule --add app="Arc" space=www
+      
+      ######################## Display 1 ########################
+      yabai -m rule --add app="Code" space=code display=_123
+      yabai -m rule --add app="Sublime" space=code display=_123
+      yabai -m rule --add app="Zed" space=code display=_123
+      yabai -m rule --add app="Neovide" space=code display=_123
 
-      yabai -m rule --add app="Code" space=code
-      yabai -m rule --add app="Sublime" space=code
-      yabai -m rule --add app="Zed" space=code
-      yabai -m rule --add app="Neovide" space=code
+      yabai -m rule --add app="PyCharm" space=ide display=_123
+      yabai -m rule --add app="GoLand" space=ide display=_123
+      yabai -m rule --add app="Lens" space=ide display=_123
 
-      yabai -m rule --add app="PyCharm" space=ide
-      yabai -m rule --add app="GoLand" space=ide
-      yabai -m rule --add app="Lens" space=ide
+      yabai -m rule --add app="Mail" space=mail display=_123
+      yabai -m rule --add app="Canary" space=mail display=_123
 
-      yabai -m rule --add app="Telegram" space=chat
-      yabai -m rule --add app="Mattermost" space=chat
+      ######################## Display 2 ########################
+      yabai -m rule --add app="Arc" space=www display=_456
 
-      yabai -m rule --add app="UpNote" space=todo
-      yabai -m rule --add app="Bear" space=todo
-      yabai -m rule --add app="Anytype" space=todo
-      yabai -m rule --add app="Craft" space=todo
+      yabai -m rule --add app="Telegram" space=chat display=_456
+      yabai -m rule --add app="Mattermost" space=chat display=_456
 
-      yabai -m rule --add app="kitty" space=terminal
-      yabai -m rule --add app="WezTerm" space=terminal
+      yabai -m rule --add app="UpNote" space=todo display=_456
+      yabai -m rule --add app="Bear" space=todo display=_456
+      yabai -m rule --add app="Anytype" space=todo display=_456
+      yabai -m rule --add app="Craft" space=todo display=_456
+
+      ######################## Display 3 ########################
+      yabai -m rule --add app="kitty" space=terminal display=_78
+      yabai -m rule --add app="WezTerm" space=terminal display=_78
 
       echo "yabai configuration loaded.."
     '';
