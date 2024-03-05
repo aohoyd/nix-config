@@ -11,6 +11,7 @@
     fzf
     fzy
     fish
+    jq
 
     # containers
     docker-client

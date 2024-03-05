@@ -9,8 +9,8 @@
       # Mouse config
 
       # center mouse on window with focus
-      yabai -m config mouse_follows_focus off
-      yabai -m config focus_follows_mouse off
+      yabai -m config mouse_follows_focus on
+      yabai -m config focus_follows_mouse autofocus
 
       # modifier for clicking and dragging with mouse
       yabai -m config mouse_modifier alt
@@ -41,7 +41,7 @@
       # rules
       yabai -m rule --add app="^System Settings$" manage=off
       yabai -m rule --add app="^Dash$" manage=off
-      yabai -m rule --add app="^Толк$" manage=off
+      # yabai -m rule --add app="^Толк$" manage=off
       yabai -m rule --add app="^OpenVPN Connect$" manage=off
       yabai -m rule --add app="^Tunnelblick$" manage=off
       yabai -m rule --add app="^Raycast$" manage=off
@@ -79,6 +79,7 @@
       yabai -m rule --add app="Craft" space=todo
 
       yabai -m rule --add app="kitty" space=terminal
+      yabai -m rule --add app="WezTerm" space=terminal
 
       echo "yabai configuration loaded.."
     '';
