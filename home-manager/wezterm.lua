@@ -95,6 +95,7 @@ return {
 
 		{ key = "UpArrow", mods = "SHIFT", action = wezterm.action.ScrollToPrompt(-1) },
 		{ key = "DownArrow", mods = "SHIFT", action = wezterm.action.ScrollToPrompt(1) },
+		{ key = "LeftArrow", mods = "SHIFT", action = wezterm.action.SelectTextAtMouseCursor("SemanticZone") },
 
 		{
 			key = "g",

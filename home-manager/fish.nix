@@ -4,75 +4,35 @@
     enable = true;
     interactiveShellInit = ''
       set -x TERM xterm-256color
-      set -x GIT_EDITOR nvim
-      set -x EDITOR nvim
-      set -x VISUAL neovide --no-tabs
+      set -x GIT_EDITOR hx
+      set -x EDITOR hx
+      set -x VISUAL zed
       set -x LC_ALL en_US.UTF-8
       set -x K9S_CONFIG_DIR ~/.config/k9s
+      
+      set -x FZF_DEFAULT_OPTS \
+          "--border=none" \
+          "--color=fg:-1,fg+:#d0d0d0,bg:-1,bg+:#262626" \
+          "--color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00" \
+          "--color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf" \
+          "--color=border:#262626,label:#aeaeae,query:#d9d9d9" \
+          "--preview-window=\"border-rounded\"" \
+          "--prompt=\"> \"" \
+          "--marker=\">\"" \
+          "--pointer=\"◆\"" \
+          "--separator=\"\"" \
+          "--scrollbar=\"│\""
+      set -x FZF_FIND_FILE_OPTS \
+          "--preview \"bat -n --color=always {}\""
 
-      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin /Applications/neovide.app/Contents/MacOS
-      fish_add_path ~/go/bin ~/.krew/bin /run/current-system/sw/bin 
+      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin ~/go/bin ~/.krew/bin /run/current-system/sw/bin 
 
       # run starship
       eval (${pkgs.starship}/bin/starship init fish)
-
-      set _fishprompt_aid "fish"$fish_pid
-      set _fishprompt_started 0
-      # empty if running; or a numeric exit code; or CANCEL
-      set _fishprompt_postexec ""
-
-      functions -c fish_prompt _fishprompt_saved_prompt
-      set _fishprompt_prompt_count 0
-      set _fishprompt_disp_count 0
-      function _fishprompt_start --on-event fish_prompt
-          set _fishprompt_prompt_count (math $_fishprompt_prompt_count + 1)
-          # don't use post-exec, because it is called *before* omitted-newline output
-          if [ -n "$_fishprompt_postexec" ]
-              printf "\033]133;D;%s;aid=%s\007" "$_fishprompt_postexec" $_fishprompt_aid
-          end
-          printf "\033]133;A;aid=%s;cl=m\007" $_fishprompt_aid
-      end
-
-      function fish_prompt
-          set _fishprompt_disp_count (math $_fishprompt_disp_count + 1)
-          printf "\033]133;P;k=i\007%b\033]133;B\007" (string join "\n" (_fishprompt_saved_prompt))
-          set _fishprompt_started 1
-          set _fishprompt_postexec ""
-      end
-
-      function _fishprompt_preexec --on-event fish_preexec
-          if [ "$_fishprompt_started" = 1 ]
-              printf "\033]133;C;\007"
-          end
-          set _fishprompt_started 0
-      end
-
-      function _fishprompt_postexec --on-event fish_postexec
-          set _fishprompt_postexec $status
-          _fishprompt_start
-      end
-
-      function __fishprompt_cancel --on-event fish_cancel
-          set _fishprompt_postexec CANCEL
-          _fishprompt_start
-      end
-
-      function _fishprompt_exit --on-process %self
-          if [ "$_fishprompt_started" = 1 ]
-              printf "\033]133;Z;aid=%s\007" $_fishprompt_aid
-          end
-      end
-
-      if functions -q fish_right_prompt
-          functions -c fish_right_prompt _fishprompt_saved_right_prompt
-          function fish_right_prompt
-              printf "\033]133;P;k=r\007%b\033]133;B\007" (string join "\n" (_fishprompt_saved_right_prompt))
-          end
-      end
     '';
     shellAbbrs = {
-      e = "nvim";
-      v = "neovide";
+      e = "hx";
+      v = "zed";
 
       watch = "viddy";
 
@@ -85,7 +45,7 @@
       gpr = "git prev";
       gam = "git amend";
       gfp = "git fetch -p";
-      gi = "gitui";
+      lgi = "lazygit";
 
       k = "kubectl";
       ka = "kubectl apply --recursive -f";
@@ -165,6 +125,39 @@
       ls = "eza --group-directories-first";
     };
     functions = {
+      __fzf_rg = ''
+        rm -f /tmp/rg-fzf-{r,f}
+        set -l RG_PREFIX "rg --column --line-number --no-heading --color=always --smart-case "
+        fzf --ansi --disabled --query "$argv" \
+            --bind "start:reload:$RG_PREFIX {q}" \
+            --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
+            --bind 'ctrl-t:transform:string match -q -- "*fzf*" $FZF_PROMPT &&
+              echo "rebind(change)+change-prompt(1. ripgrep> )+disable-search+transform-query:echo \{q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r" ||
+              echo "unbind(change)+change-prompt(2. fzf> )+enable-search+transform-query:echo \{q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f"' \
+            --prompt '1. ripgrep> ' \
+            --delimiter : \
+            --header 'CTRL-T: Switch between ripgrep/fzf' \
+            --preview 'bat --color=always {1} --highlight-line {2}' \
+            --bind 'enter:become($EDITOR {1} +{2})'
+      '';
+      
+      y = ''
+      	set tmp (mktemp -t "yazi-cwd.XXXXXX")
+      	yazi $argv --cwd-file="$tmp"
+      	if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+      		builtin cd -- "$cwd"
+      	end
+      	rm -f -- "$tmp"
+      '';
+      
+      nix-search = ''
+        nix-env -qaP $argv
+      '';
+      
+      nix-install = ''
+        nix-env -iA nixpkgs.$argv[1]
+      '';
+      
       ny = ''
         argparse e/expand= -- $argv
         or return

@@ -20,7 +20,7 @@
     docker-credential-helpers
 
     # programming
-    go_1_22
+    go_1_23
     gofumpt
     rustup
     python311

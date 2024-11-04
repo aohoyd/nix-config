@@ -71,7 +71,7 @@
       auto-optimise-store = true;
     };
     extraOptions = ''
-      experimental-features = nix-command flakes repl-flake nix-command flakes
+      experimental-features = nix-command flakes
       extra-nix-path = nixpkgs=flake:nixpkgs
     '';
   };
@@ -88,9 +88,9 @@
   };
 
   services.nix-daemon.enable = true;
-  
+
   # Enable yabai service
-  services.yabai.enable = true;
+  services.yabai.enable = false;
   # services.skhd.enable = true;
 
   security.pam.enableSudoTouchIdAuth = true;

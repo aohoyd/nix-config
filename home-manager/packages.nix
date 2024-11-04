@@ -9,7 +9,11 @@
     grpcurl
     helix
 
+    # python
+    uv
+
     # cli
+    yazi
     choose
     hck
     starship
@@ -44,6 +48,7 @@
     kubectl
     minikube
     kubernetes-helm-wrapped
+    helm-ls
     kustomize
     krew
     kube-linter
