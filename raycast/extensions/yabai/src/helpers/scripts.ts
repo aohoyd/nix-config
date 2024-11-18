@@ -12,7 +12,7 @@ export const runYabaiCommand = async (command: string, opt?: { shell?: boolean }
     preferences.yabaiPath && preferences.yabaiPath.length > 0
       ? preferences.yabaiPath
       : cpus()[0].model.includes("Apple")
-        ? "/opt/homebrew/bin/yabai"
+        ? "/run/current-system/sw/bin/yabai"
         : "/usr/local/bin/yabai";
 
   if (!fs.existsSync(yabaiPath)) {

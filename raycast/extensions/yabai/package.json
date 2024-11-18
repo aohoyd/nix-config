@@ -130,6 +130,97 @@
       ]
     },
     {
+      "name": "focus-left",
+      "title": "Focus Left",
+      "subtitle": "yabai",
+      "description": "Focuses left or stack.prev.",
+      "mode": "no-view"
+    },
+    {
+      "name": "focus-right",
+      "title": "Focus Right",
+      "subtitle": "yabai",
+      "description": "Focuses right or stack.next.",
+      "mode": "no-view"
+    },
+    {
+      "name": "focus-up",
+      "title": "Focus Up",
+      "subtitle": "yabai",
+      "description": "Focuses upwards.",
+      "mode": "no-view"
+    },
+    {
+      "name": "focus-down",
+      "title": "Focus Down",
+      "subtitle": "yabai",
+      "description": "Focuses down.",
+      "mode": "no-view"
+    },
+    {
+      "name": "swap-left",
+      "title": "Swap Left",
+      "subtitle": "yabai",
+      "description": "Swaps window left.",
+      "mode": "no-view"
+    },
+    {
+      "name": "swap-right",
+      "title": "Swap Right",
+      "subtitle": "yabai",
+      "description": "Swaps window right.",
+      "mode": "no-view"
+    },
+    {
+      "name": "swap-up",
+      "title": "Swap Up",
+      "subtitle": "yabai",
+      "description": "Swaps window upwards.",
+      "mode": "no-view"
+    },
+    {
+      "name": "swap-down",
+      "title": "Swap Down",
+      "subtitle": "yabai",
+      "description": "Swaps window down.",
+      "mode": "no-view"
+    },
+    {
+      "name": "warp-left",
+      "title": "Warp Left",
+      "subtitle": "yabai",
+      "description": "Warps window left.",
+      "mode": "no-view"
+    },
+    {
+      "name": "warp-right",
+      "title": "Warp Right",
+      "subtitle": "yabai",
+      "description": "Warps window right.",
+      "mode": "no-view"
+    },
+    {
+      "name": "warp-up",
+      "title": "Warp Up",
+      "subtitle": "yabai",
+      "description": "Warps window upwards.",
+      "mode": "no-view"
+    },
+    {
+      "name": "warp-down",
+      "title": "Warp Down",
+      "subtitle": "yabai",
+      "description": "Warps window down.",
+      "mode": "no-view"
+    },
+    {
+      "name": "toggle-float",
+      "title": "Toggle Float",
+      "subtitle": "yabai",
+      "description": "Toggles floating window.",
+      "mode": "no-view"
+    },
+    {
       "name": "destroy-space",
       "title": "Destroy Current Space",
       "subtitle": "yabai",
