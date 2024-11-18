@@ -27,6 +27,12 @@ add_newline = true
 command_timeout = 500
 scan_timeout = 30
 
+[line_break]
+disabled = true
+
+[character]
+disabled = true
+
 [palettes.gruvbox_dark]
 aqua = "#689d6a"
 bg1 = "#3c3836"
@@ -82,7 +88,7 @@ symbol = " "
 format = "[  $duration]($style)"
 style = "bold fg:orange"
 min_time = 10_000
-show_notifications = true
+show_notifications = false
 min_time_to_notify = 60_000
 
 [golang]

@@ -45,7 +45,7 @@ end)
 
 return {
 	check_for_updates = false,
-	color_scheme = "Ayu Mirage",
+	color_scheme = "Monokai Remastered",
 	inactive_pane_hsb = {
 		hue = 1.0,
 		saturation = 1.0,
@@ -82,7 +82,7 @@ return {
 		{ key = "7", mods = "CMD", action = wezterm.action({ ActivateTab = 6 }) },
 		{ key = "8", mods = "CMD", action = wezterm.action({ ActivateTab = 7 }) },
 		{ key = "9", mods = "CMD", action = wezterm.action({ ActivateTab = 8 }) },
-		{ key = "W", mods = "CMD|SHIFT", action = wezterm.action({ CloseCurrentPane = { confirm = true } }) },
+		{ key = "w", mods = "CMD", action = wezterm.action({ CloseCurrentPane = { confirm = true } }) },
 
 		{ key = "d", mods = "CMD|SHIFT", action = wezterm.action({ ScrollByPage = 1 }) },
 		{ key = "u", mods = "CMD|SHIFT", action = wezterm.action({ ScrollByPage = -1 }) },

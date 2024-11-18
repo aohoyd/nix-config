@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Toggle Service
+# @raycast.title Focus down
 # @raycast.mode silent
 #
 # Optional parameters:
@@ -14,8 +14,4 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-if test -z (launchctl list | grep org.nixos.yabai)
-  launchctl load ~/Library/LaunchAgents/org.nixos.yabai.plist
-else
-  launchctl unload ~/Library/LaunchAgents/org.nixos.yabai.plist
-end
+/run/current-system/sw/bin/yabai -m window --focus south 2>/dev/null || true

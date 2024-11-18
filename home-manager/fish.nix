@@ -29,6 +29,10 @@
 
       # run starship
       eval (${pkgs.starship}/bin/starship init fish)
+
+      if test $TERM_PROGRAM = "WarpTerminal"
+        set -x STARSHIP_CONFIG ~/.config/starship-warp.toml
+      end
     '';
     shellAbbrs = {
       e = "hx";

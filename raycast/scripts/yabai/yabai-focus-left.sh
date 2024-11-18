@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Stack
+# @raycast.title Focus left
 # @raycast.mode silent
 #
 # Optional parameters:
@@ -14,14 +14,8 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-set -l PATH /run/current-system/sw/bin
-set -l split_child (yabai -m query --windows --window | jq -r '.["split-child"]')
-switch $split_child
-    case first_child
-        yabai -m window --stack next
-    case second_child
-        yabai -m window --stack prev
-    case '*'
-        echo "Not a split window" >&2
-        exit 1
-end
+if test (/run/current-system/sw/bin/yabai -m query --spaces --space | /run/current-system/sw/bin/jq -r '.type') = "stack"
+    /run/current-system/sw/bin/yabai -m window --focus stack.prev
+else
+    /run/current-system/sw/bin/yabai -m window --focus west
+end 2>/dev/null || true

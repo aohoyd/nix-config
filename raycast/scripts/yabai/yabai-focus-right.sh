@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Focus next
+# @raycast.title Focus right
 # @raycast.mode silent
 #
 # Optional parameters:
@@ -14,4 +14,8 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-/run/current-system/sw/bin/yabai -m window --focus stack.next || /run/current-system/sw/bin/yabai -m window --focus stack.first 2>/dev/null
+if test (/run/current-system/sw/bin/yabai -m query --spaces --space | /run/current-system/sw/bin/jq -r '.type') = "stack"
+    /run/current-system/sw/bin/yabai -m window --focus stack.next
+else
+    /run/current-system/sw/bin/yabai -m window --focus east
+end 2>/dev/null || true

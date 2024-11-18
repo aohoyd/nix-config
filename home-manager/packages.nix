@@ -29,7 +29,6 @@
     gettext
     nushell
     neovim
-    neovide
     fx
     mise
 

@@ -14,5 +14,4 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-/run/current-system/sw/bin/yabai -m space --layout bsp
-/run/current-system/sw/bin/yabai -m window --swap first
+/run/current-system/sw/bin/yabai -m space --layout bsp && /run/current-system/sw/bin/yabai -m window --swap first

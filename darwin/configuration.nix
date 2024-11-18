@@ -67,8 +67,8 @@
       interval.Day = 7;
       options = "--delete-older-than 7d";
     };
-    settings = {
-      auto-optimise-store = true;
+    optimise = {
+      automatic = true;
     };
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -90,7 +90,7 @@
   services.nix-daemon.enable = true;
 
   # Enable yabai service
-  services.yabai.enable = false;
+  services.yabai.enable = true;
   # services.skhd.enable = true;
 
   security.pam.enableSudoTouchIdAuth = true;

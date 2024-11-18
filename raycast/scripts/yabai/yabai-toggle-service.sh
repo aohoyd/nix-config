@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Focus left
+# @raycast.title Toggle Service
 # @raycast.mode silent
 #
 # Optional parameters:
@@ -14,15 +14,8 @@
 # @raycast.author Alexey Olshanskiy
 # @raycast.authorURL https://github.com/aohoyd
 
-set -l PATH /run/current-system/sw/bin
-set -l DIR west
-
-yabai -m window --focus $DIR 2>/dev/null || \
-  begin
-    set -l visible (yabai -m query --windows --display $DIR | jq -r 'map(select(.["is-visible"]).id) | first')
-    if test "$visible" = "null"
-      yabai -m display --focus $DIR
-    else
-      yabai -m window --focus $visible
-    end
-  end
+if string match -q -- "*org.nixos.yabai*" (/bin/launchctl list)
+    /bin/launchctl unload /Users/$USER/Library/LaunchAgents/org.nixos.yabai.plist
+else
+    /bin/launchctl load /Users/$USER/Library/LaunchAgents/org.nixos.yabai.plist
+end 2>/dev/null
