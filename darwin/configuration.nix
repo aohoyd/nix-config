@@ -90,7 +90,11 @@
   services.nix-daemon.enable = true;
 
   # Enable yabai service
-  services.yabai.enable = true;
+  services.yabai = {
+    enable = true;
+    package = pkgs.yabai;
+    enableScriptingAddition = false;
+  };
   # services.skhd.enable = true;
 
   security.pam.enableSudoTouchIdAuth = true;

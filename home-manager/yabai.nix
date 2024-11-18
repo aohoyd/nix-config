@@ -83,7 +83,6 @@
       ######################## Display right ########################
       yabai -m rule --add app="Code" space=code display=right
       yabai -m rule --add app="Sublime" space=code display=right
-      yabai -m rule --add app="^Zed Preview$" space=code display=right
       yabai -m rule --add app="Neovide" space=code display=right
 
       yabai -m rule --add app="UpNote" space=todo display=right
