@@ -3,7 +3,7 @@ import { showFailureToast } from "@raycast/utils";
 
 export default async function Command() {
   try {
-    const { stderr } = await runYabaiCommand("-m window --swap east");
+    const { stderr } = await runYabaiCommand("-m window --swap west");
 
     if (stderr) {
       throw new Error();
@@ -13,7 +13,7 @@ export default async function Command() {
       if (error.message.includes("Yabai executable not found")) {
         return;
       }
-      if (error.message.includes("could not locate a eastward managed window")) {
+      if (error.message.includes("could not locate a westward managed window")) {
         return;
       }
     }

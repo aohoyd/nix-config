@@ -12,6 +12,7 @@
     fzy
     fish
     jq
+    jankyborders
 
     # containers
     docker-client

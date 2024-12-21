@@ -9,8 +9,8 @@
       # Mouse config
 
       # center mouse on window with focus
-      yabai -m config mouse_follows_focus on
-      yabai -m config focus_follows_mouse autofocus
+      yabai -m config mouse_follows_focus off
+      yabai -m config focus_follows_mouse off
 
       # modifier for clicking and dragging with mouse
       yabai -m config mouse_modifier alt

@@ -91,7 +91,7 @@
 
   # Enable yabai service
   services.yabai = {
-    enable = true;
+    enable = false;
     package = pkgs.yabai;
     enableScriptingAddition = false;
   };

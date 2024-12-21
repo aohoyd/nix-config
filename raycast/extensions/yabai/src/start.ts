@@ -1,10 +1,12 @@
 import { showHUD } from "@raycast/api";
-import { runYabaiCommand } from "./helpers/scripts";
+import { getYabaiServiceName } from "./helpers/scripts";
 import { showFailureToast } from "@raycast/utils";
+import { execaCommand } from "execa";
 
 export default async function Command() {
   try {
-    const { stderr } = await runYabaiCommand("--start-service");
+    const yabaiServiceName: string = getYabaiServiceName();
+    const { stderr } = await execaCommand(`/bin/launchctl start ${yabaiServiceName}`);
 
     if (stderr) {
       throw new Error();

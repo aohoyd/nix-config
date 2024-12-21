@@ -6,7 +6,7 @@ import { showFailureToast } from "@raycast/utils";
 export default async function Command() {
   try {
     const space = await getSpace();
-    const direction: string = space.type === "stack" ? "stack.next" : "east";
+    const direction: string = space.type === "stack" ? "stack.prev" : "east";
 
     const { stderr } = await runYabaiCommand(`-m window --focus ${direction}`);
 

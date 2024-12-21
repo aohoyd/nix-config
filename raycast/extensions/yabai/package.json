@@ -235,6 +235,13 @@
       "required": false,
       "type": "textfield",
       "description": "Location to the Yabai installation (Defaults to `/opt/homebrew/bin/yabai` on M1 Macs, and `/usr/local/bin/yabai` otherwise)"
+    },
+    {
+      "name": "yabaiServiceName",
+      "title": "Name of yabai service",
+      "required": false,
+      "type": "textfield",
+      "description": "Name of the Yabai service (Defaults to `com.koekeishiya.yabai`)"
     }
   ],
   "dependencies": {

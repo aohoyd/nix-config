@@ -4,12 +4,12 @@
     enable = true;
     interactiveShellInit = ''
       set -x TERM xterm-256color
-      set -x GIT_EDITOR hx
-      set -x EDITOR hx
+      set -x GIT_EDITOR nvim
+      set -x EDITOR nvim
       set -x VISUAL zed
       set -x LC_ALL en_US.UTF-8
       set -x K9S_CONFIG_DIR ~/.config/k9s
-      
+
       set -x FZF_DEFAULT_OPTS \
           "--border=none" \
           "--color=fg:-1,fg+:#d0d0d0,bg:-1,bg+:#262626" \
@@ -25,17 +25,57 @@
       set -x FZF_FIND_FILE_OPTS \
           "--preview \"bat -n --color=always {}\""
 
-      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin ~/go/bin ~/.krew/bin /run/current-system/sw/bin 
+      fish_add_path /opt/homebrew/bin /opt/homebrew/sbin /opt/homebrew/opt/coreutils/libexec/gnubin ~/go/bin ~/.krew/bin /run/current-system/sw/bin
 
       # run starship
       eval (${pkgs.starship}/bin/starship init fish)
 
+      set -x STARSHIP_CONFIG ~/.config/starship.toml
       if test $TERM_PROGRAM = "WarpTerminal"
         set -x STARSHIP_CONFIG ~/.config/starship-warp.toml
       end
+
+      function __term_setup --on-event fish_prompt -d "Setup term integration"
+        functions -e __term_setup
+
+        # Setup prompt marking
+        function __term_mark_prompt_start --on-event fish_prompt --on-event fish_cancel --on-event fish_posterror
+          # If we never got the output end event, then we need to send it now.
+          if test "$__term_prompt_state" != prompt-start
+            echo -en "\e]133;D\a"
+          end
+
+          set --global __term_prompt_state prompt-start
+          echo -en "\e]133;A\a"
+        end
+
+        function __term_mark_output_start --on-event fish_preexec
+          set --global __term_prompt_state pre-exec
+          echo -en "\e]133;C\a"
+        end
+
+        function __term_mark_output_end --on-event fish_postexec
+          set --global __term_prompt_state post-exec
+          echo -en "\e]133;D;$status\a"
+        end
+
+        # Report pwd. This is actually built-in to fish but only for terminals
+        # that match an allowlist and that isn't us.
+        function __update_cwd_osc --on-variable PWD -d 'Notify capable terminals when $PWD changes'
+          if status --is-command-substitution || set -q INSIDE_EMACS
+            return
+          end
+          printf \e\]7\;file://%s%s\a $hostname (string escape --style=url $PWD)
+        end
+
+        set --global fish_handle_reflow 1
+
+        __term_mark_prompt_start
+        __update_cwd_osc
+      end
     '';
     shellAbbrs = {
-      e = "hx";
+      e = "nvim";
       v = "zed";
 
       watch = "viddy";
@@ -144,7 +184,7 @@
             --preview 'bat --color=always {1} --highlight-line {2}' \
             --bind 'enter:become($EDITOR {1} +{2})'
       '';
-      
+
       y = ''
       	set tmp (mktemp -t "yazi-cwd.XXXXXX")
       	yazi $argv --cwd-file="$tmp"
@@ -153,15 +193,15 @@
       	end
       	rm -f -- "$tmp"
       '';
-      
+
       nix-search = ''
         nix-env -qaP $argv
       '';
-      
+
       nix-install = ''
         nix-env -iA nixpkgs.$argv[1]
       '';
-      
+
       ny = ''
         argparse e/expand= -- $argv
         or return
@@ -192,7 +232,7 @@
         body = "kubectl view-secret $argv";
         wraps = "kubectl get secret";
       };
-      
+
       kva = {
         body = "kubectl view-secret --all $argv";
         wraps = "kubectl get secret";

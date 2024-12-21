@@ -22,3 +22,13 @@ export const runYabaiCommand = async (command: string, opt?: { shell?: boolean }
 
   return await execaCommand([userEnv, yabaiPath, command].join(" "), opt);
 };
+
+export function getYabaiServiceName(): string {
+  const preferences = getPreferenceValues<Preferences>();
+  const yabaiServiceName: string =
+    preferences.yabaiServiceName && preferences.yabaiServiceName.length > 0
+      ? preferences.yabaiServiceName
+      : "com.koekeishiya.yabai";
+
+  return yabaiServiceName;
+}

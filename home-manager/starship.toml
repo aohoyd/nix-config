@@ -82,7 +82,7 @@ symbol = " "
 format = "[  $duration]($style)"
 style = "bold fg:orange"
 min_time = 10_000
-show_notifications = true
+show_notifications = false
 min_time_to_notify = 60_000
 
 [golang]

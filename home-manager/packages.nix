@@ -2,12 +2,11 @@
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   home.packages = with pkgs; [
-    lnav
+    # lnav
     tailspin
     cfssl
     go-task
     grpcurl
-    helix
 
     # python
     uv
@@ -55,6 +54,6 @@
 
     # custom packages
     cdebug
-    superfile
+    # superfile
   ];
 }

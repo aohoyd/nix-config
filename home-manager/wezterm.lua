@@ -2,139 +2,235 @@
 -- See https://wezfurlong.org/wezterm/
 
 local wezterm = require("wezterm")
-local scheme = wezterm.get_builtin_color_schemes()["Catppuccin Mocha"]
 
-local dump_scrollback_to_file = function(pane)
-	local zones = pane:get_semantic_zones("Output")
+-- See https://wezfurlong.org/wezterm/
 
-	if #zones == 0 then
+local wezterm = require("wezterm")
+local action = wezterm.action
+local action_callback = wezterm.action_callback
+
+local config = wezterm.config_builder()
+
+local theme = "Cloud (terminal.sexy)"
+-- local theme = "Hybrid (terminal.sexy)"
+
+config.check_for_updates = false
+config.color_scheme = theme
+config.inactive_pane_hsb = {
+	hue = 1.0,
+	saturation = 1.0,
+	brightness = 1.0,
+}
+
+-- config.font = wezterm.font("Mono Lisa")
+config.font = wezterm.font("Cascadia Mono NF")
+config.font_size = 19.0
+config.freetype_load_flags = "NO_HINTING"
+
+config.set_environment_variables = {}
+config.use_fancy_tab_bar = true
+config.hide_tab_bar_if_only_one_tab = false
+config.window_decorations = "RESIZE"
+config.scrollback_lines = 10000
+
+config.enable_kitty_keyboard = true
+config.send_composed_key_when_right_alt_is_pressed = false
+config.disable_default_key_bindings = true
+config.tab_bar_at_bottom = false
+
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+
+tabline.setup({
+	options = {
+		theme = theme,
+		section_separators = {
+			left = wezterm.nerdfonts.ple_lower_left_triangle,
+			right = wezterm.nerdfonts.ple_lower_right_triangle,
+		},
+		component_separators = {
+			left = wezterm.nerdfonts.pl_left_soft_divider,
+			right = wezterm.nerdfonts.pl_right_soft_divider,
+		},
+		tab_separators = {
+			left = wezterm.nerdfonts.ple_right_half_circle_thick,
+			right = wezterm.nerdfonts.ple_left_half_circle_thick,
+		},
+		color_overrides = {
+			block_mode = {
+				a = { fg = "#181825", bg = "#cba6f7" },
+				b = { fg = "#cba6f7", bg = "#313244" },
+				c = { fg = "#cdd6f4", bg = "#181825" },
+			},
+		},
+	},
+	sections = {
+		tabline_b = {},
+		tabline_x = {},
+		tabline_y = { "datetime" },
+	},
+})
+
+tabline.apply_to_config(config)
+
+local function vim_with_scrollback(window, pane)
+	local scrollback = window:get_selection_text_for_pane(pane)
+	if scrollback == nil or scrollback == "" then
 		return
 	end
 
-	local scrollback = pane:get_text_from_semantic_zone(zones[#zones])
+	local filename = os.tmpname()
+	local f = io.open(filename, "w+")
+	if not f then
+		return
+	end
 
-	-- Create a temporary file to pass to vim
-	local name = os.tmpname()
-	local f = io.open(name, "w+")
-	f:write(scrollback)
+	local success = f:write(scrollback)
+	if not success then
+		f:close()
+		return
+	end
+
 	f:flush()
 	f:close()
-	return name
-end
 
-wezterm.on("trigger-vim-with-scrollback", function(window, pane)
-	local filename = dump_scrollback_to_file(pane)
-	if not filename then
-		return
-	end
-	-- Open a new window running fzf to fuzzy search scrollback
+	-- Open a new window
 	window:perform_action(
-		wezterm.action({
-			SpawnCommandInNewWindow = {
-				args = {
-					"/run/current-system/sw/bin/fish",
-					"-c",
-					"nvim " .. filename .. "; rm -f " .. filename,
-				},
+		action.Multiple({
+			action.SpawnCommandInNewWindow({
+				args = { "/run/current-system/sw/bin/nvim", filename },
 				cwd = pane:get_current_working_dir(),
-			},
+			}),
+			-- action.CopyMode 'Close',
 		}),
 		pane
 	)
-end)
 
-return {
-	check_for_updates = false,
-	color_scheme = "Monokai Remastered",
-	inactive_pane_hsb = {
-		hue = 1.0,
-		saturation = 1.0,
-		brightness = 1.0,
+	-- Wait file to be read by vim and then remove it
+	wezterm.sleep_ms(1000)
+	os.remove(filename)
+end
+
+local function select_block_backward(window, pane)
+	if window:active_key_table() ~= "copy_mode" then
+		window:perform_action(action.ActivateCopyMode, pane)
+	end
+
+	window:perform_action(
+		action.Multiple({
+			action.CopyMode("ClearSelectionMode"),
+			action.CopyMode({ MoveBackwardZoneOfType = "Output" }),
+			action.CopyMode({ SetSelectionMode = "SemanticZone" }),
+		}),
+		pane
+	)
+end
+
+local function select_block_forward(window, pane)
+	if window:active_key_table() ~= "copy_mode" then
+		window:perform_action(action.ActivateCopyMode, pane)
+	end
+
+	window:perform_action(
+		action.Multiple({
+			action.CopyMode("ClearSelectionMode"),
+			action.CopyMode({ MoveForwardZoneOfType = "Output" }),
+			action.CopyMode({ SetSelectionMode = "SemanticZone" }),
+		}),
+		pane
+	)
+end
+
+local function basename(s)
+	if type(s) ~= "string" then
+		return
+	end
+	return string.gsub(s, "(.*[/\\])(.*)", "%2")
+end
+
+local editors = { "hx", "nvim" }
+
+local function is_editor(name)
+	if type(name) ~= "string" or not name then
+		return
+	end
+
+	for _, editor in pairs(editors) do
+		if name == editor then
+			return true
+		end
+	end
+	return false
+end
+
+local function close_pane_if_not_in_editor(window, pane, key, mods)
+	local proc_name = basename(pane:get_foreground_process_name())
+
+	if is_editor(proc_name) then
+		window:perform_action(action.SendKey({ mods = mods, key = key }), pane)
+	else
+		window:perform_action(action.CloseCurrentPane({ confirm = true }), pane)
+	end
+end
+
+config.mouse_bindings = {
+	{
+		event = { Down = { streak = 3, button = "Left" } },
+		action = wezterm.action.SelectTextAtMouseCursor("SemanticZone"),
+		mods = "NONE",
 	},
-	-- default_prog = { '/bin/bash', '-l' },
-	-- font = wezterm.font 'Ubuntu Mono derivative Powerline',
-	-- font = wezterm.font 'UbuntuMono Nerd Font',
-	font = wezterm.font("Mono Lisa"),
-	font_size = 17.0,
-	freetype_load_flags = "NO_HINTING",
-	disable_default_key_bindings = true,
-	keys = {
-		-- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
-		-- { key = "a", mods = "LEADER|CTRL",  action=wezterm.action{SendString="\x01"}},
-		{ key = "-", mods = "CMD", action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-		{ key = "=", mods = "CMD", action = wezterm.action({ SplitHorizontal = { domain = "CurrentPaneDomain" } }) },
-		{ key = "z", mods = "CMD", action = "TogglePaneZoomState" },
-		{ key = "t", mods = "CMD", action = wezterm.action({ SpawnTab = "CurrentPaneDomain" }) },
-		{ key = "h", mods = "CMD", action = wezterm.action({ ActivatePaneDirection = "Left" }) },
-		{ key = "j", mods = "CMD", action = wezterm.action({ ActivatePaneDirection = "Down" }) },
-		{ key = "k", mods = "CMD", action = wezterm.action({ ActivatePaneDirection = "Up" }) },
-		{ key = "l", mods = "CMD", action = wezterm.action({ ActivatePaneDirection = "Right" }) },
-		{ key = "H", mods = "CMD|SHIFT", action = wezterm.action({ AdjustPaneSize = { "Left", 5 } }) },
-		{ key = "J", mods = "CMD|SHIFT", action = wezterm.action({ AdjustPaneSize = { "Down", 5 } }) },
-		{ key = "K", mods = "CMD|SHIFT", action = wezterm.action({ AdjustPaneSize = { "Up", 5 } }) },
-		{ key = "L", mods = "CMD|SHIFT", action = wezterm.action({ AdjustPaneSize = { "Right", 5 } }) },
-		{ key = "1", mods = "CMD", action = wezterm.action({ ActivateTab = 0 }) },
-		{ key = "2", mods = "CMD", action = wezterm.action({ ActivateTab = 1 }) },
-		{ key = "3", mods = "CMD", action = wezterm.action({ ActivateTab = 2 }) },
-		{ key = "4", mods = "CMD", action = wezterm.action({ ActivateTab = 3 }) },
-		{ key = "5", mods = "CMD", action = wezterm.action({ ActivateTab = 4 }) },
-		{ key = "6", mods = "CMD", action = wezterm.action({ ActivateTab = 5 }) },
-		{ key = "7", mods = "CMD", action = wezterm.action({ ActivateTab = 6 }) },
-		{ key = "8", mods = "CMD", action = wezterm.action({ ActivateTab = 7 }) },
-		{ key = "9", mods = "CMD", action = wezterm.action({ ActivateTab = 8 }) },
-		{ key = "w", mods = "CMD", action = wezterm.action({ CloseCurrentPane = { confirm = true } }) },
-
-		{ key = "d", mods = "CMD|SHIFT", action = wezterm.action({ ScrollByPage = 1 }) },
-		{ key = "u", mods = "CMD|SHIFT", action = wezterm.action({ ScrollByPage = -1 }) },
-
-		{ key = "v", mods = "CMD", action = wezterm.action.PasteFrom("Clipboard") },
-		{ key = "c", mods = "CMD", action = wezterm.action.CopyTo("Clipboard") },
-		{ key = "p", mods = "CMD", action = "QuickSelect" },
-		{ key = "[", mods = "CMD", action = "ActivateCopyMode" },
-		{ key = "f", mods = "CMD", action = wezterm.action({ Search = { CaseInSensitiveString = "" } }) },
-
-		{ key = "UpArrow", mods = "SHIFT", action = wezterm.action.ScrollToPrompt(-1) },
-		{ key = "DownArrow", mods = "SHIFT", action = wezterm.action.ScrollToPrompt(1) },
-		{ key = "LeftArrow", mods = "SHIFT", action = wezterm.action.SelectTextAtMouseCursor("SemanticZone") },
-
-		{
-			key = "g",
-			mods = "CMD|SHIFT",
-			action = wezterm.action({ EmitEvent = "trigger-vim-with-scrollback" }),
-		},
-		{ key = "l", mods = "CMD|SHIFT", action = wezterm.action.ShowDebugOverlay },
-	},
-	mouse_bindings = {
-		{
-			event = { Down = { streak = 3, button = "Left" } },
-			action = wezterm.action.SelectTextAtMouseCursor("SemanticZone"),
-			mods = "NONE",
-		},
-	},
-	set_environment_variables = {},
-
-	use_fancy_tab_bar = true,
-	hide_tab_bar_if_only_one_tab = true,
-
-	colors = {
-		tab_bar = {
-			background = scheme.background,
-			new_tab = { bg_color = "#2e3440", fg_color = scheme.ansi[8], intensity = "Bold" },
-			new_tab_hover = { bg_color = scheme.ansi[1], fg_color = scheme.brights[8], intensity = "Bold" },
-			-- format-tab-title
-			-- active_tab = { bg_color = "#121212", fg_color = "#FCE8C3" },
-			-- inactive_tab = { bg_color = scheme.background, fg_color = "#FCE8C3" },
-			-- inactive_tab_hover = { bg_color = scheme.ansi[1], fg_color = "#FCE8C3" },
-		},
-	},
-
-	launch_menu = {
-		{ label = "bash", args = { "bash", "-l" } },
-		{ label = "fish", args = { "fish", "-l" } },
-	},
-
-	enable_kitty_keyboard = true,
-	enable_csi_u_key_encoding = false,
-
-	scrollback_lines = 10000,
 }
+
+config.keys = {
+	{ key = "-", mods = "CMD", action = action.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "1", mods = "CMD", action = action.ActivateTab(0) },
+	{ key = "2", mods = "CMD", action = action.ActivateTab(1) },
+	{ key = "3", mods = "CMD", action = action.ActivateTab(2) },
+	{ key = "4", mods = "CMD", action = action.ActivateTab(3) },
+	{ key = "5", mods = "CMD", action = action.ActivateTab(4) },
+	{ key = "6", mods = "CMD", action = action.ActivateTab(5) },
+	{ key = "7", mods = "CMD", action = action.ActivateTab(6) },
+	{ key = "8", mods = "CMD", action = action.ActivateTab(7) },
+	{ key = "9", mods = "CMD", action = action.ActivateTab(8) },
+	{ key = "=", mods = "CMD", action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "D", mods = "CMD", action = action.ScrollByPage(1) },
+	{ key = "H", mods = "CMD", action = action.AdjustPaneSize({ "Left", 5 }) },
+	{ key = "J", mods = "CMD", action = action.AdjustPaneSize({ "Down", 5 }) },
+	{ key = "K", mods = "CMD", action = action.AdjustPaneSize({ "Up", 5 }) },
+	{ key = "L", mods = "CMD", action = action.ShowDebugOverlay },
+	{
+		key = "P",
+		mods = "CMD",
+		action = action.QuickSelectArgs({
+			label = "open url",
+			patterns = { "https?://\\S+" },
+			action = action_callback(function(window, pane)
+				local url = window:get_selection_text_for_pane(pane)
+				wezterm.open_with(url)
+			end),
+		}),
+	},
+	{ key = "U", mods = "CMD", action = action.ScrollByPage(-1) },
+	{ key = "[", mods = "CMD", action = action.ActivateCopyMode },
+	{ key = "c", mods = "CMD", action = action.CopyTo("Clipboard") },
+	{ key = "e", mods = "CMD", action = action_callback(vim_with_scrollback) },
+	{ key = "f", mods = "CMD", action = action.Search({ CaseInSensitiveString = "" }) },
+	{ key = "h", mods = "CMD", action = action.ActivatePaneDirection("Left") },
+	{ key = "j", mods = "CMD", action = action.ActivatePaneDirection("Down") },
+	{ key = "k", mods = "CMD", action = action.ActivatePaneDirection("Up") },
+	{ key = "l", mods = "CMD", action = action.ActivatePaneDirection("Right") },
+	{ key = "p", mods = "CMD", action = action.QuickSelect },
+	{ key = "t", mods = "CMD", action = action.SpawnTab("CurrentPaneDomain") },
+	{ key = "v", mods = "CMD", action = action.PasteFrom("Clipboard") },
+	{
+		key = "w",
+		mods = "CMD",
+		action = action_callback(function(window, pane)
+			close_pane_if_not_in_editor(window, pane, utf8.char(0x1E), nil)
+		end),
+	},
+	{ key = "z", mods = "CMD", action = action.TogglePaneZoomState },
+	{ key = "UpArrow", mods = "CMD", action = action_callback(select_block_backward) },
+	{ key = "DownArrow", mods = "CMD", action = action_callback(select_block_forward) },
+}
+
+return config
